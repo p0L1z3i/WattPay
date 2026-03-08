@@ -4,10 +4,10 @@ WattPay FastAPI Application
 This module defines the FastAPI application instance and registers all routers.
 """
 import os
+from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 
-from api.tenant.routes import router as tenant_router
 from api.owner.routes import router as owner_router
 
 from api.common.config_manager import config
@@ -31,6 +31,17 @@ def _show_config_summary():
     logger.info("=" * 60)
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan event handler."""
+    logger.info("WattPay application is starting up...")
+    _show_config_summary()
+    logger.info("WattPay application startup complete.")
+    yield
+    logger.info("WattPay application is shutting down...")
+    logger.info("WattPay application shutdown complete.")
+
+
 # ── FastAPI application setup ──────────────────────────────────
 app = FastAPI(
     title="WattPay Unified API",
@@ -38,23 +49,10 @@ app = FastAPI(
     description="WattPay - Electricity Consumption Tracking System",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 app.include_router(owner_router, prefix="/owner", tags=["Owner"])
-app.include_router(tenant_router, prefix="/tenant", tags=["Tenant"])
-
-
-@app.on_event("startup")
-async def startup_event():
-    """Application startup event handler."""
-
-    logger.info("WattPay application is starting up...")
-    _show_config_summary()
-    logger.info("WattPay application startup complete.")
-
-    return {
-        'details': "WattPay application started successfully",
-    }
 
 
 # Root Endpoint

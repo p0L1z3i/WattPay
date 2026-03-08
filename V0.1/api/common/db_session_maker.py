@@ -153,7 +153,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         logger.error("Database session error: %s", e)
         raise
     except Exception as e:
-        logger.error("Unexpected error getting DB session: %s", e)
+        logger.error("Error: %s", e)
         raise
     finally:
         if db is not None:
@@ -191,7 +191,7 @@ async def get_db_session() -> AsyncSession:
         logger.error("Database session error: %s", e)
         raise
     except Exception as e:
-        logger.error("Unexpected error getting DB session: %s", e)
+        logger.error("Error: %s", e)
         raise
 
 
