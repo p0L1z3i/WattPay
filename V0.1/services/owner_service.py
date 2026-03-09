@@ -95,3 +95,32 @@ async def add_owner(
 
     logger.error("Failed to add owner: %s", owner.owner_name)
     return None
+
+
+async def update_owner(
+        db: AsyncSession, owner_id: int, owner: OwnerCreate
+) -> OwnerResponse | None:
+    """Update owner details"""
+
+    logger.debug("Updating owner with id: %d", owner_id)
+    result = await db.execute(
+        select(Owner).where(Owner.owner_id == owner_id)
+    )
+    db_owner = result.scalars().first()
+
+    if not db_owner:
+        logger.warning("Owner not found with id: %d", owner_id)
+        return None
+
+    db_owner.owner_name = owner.owner_name
+    db_owner.owner_contact = owner.owner_contact
+    db_owner.owner_email = owner.owner_email
+    db_owner.owner_status = owner.owner_status
+    if owner.owner_updated_at is not None:
+        db_owner.owner_updated_at = owner.owner_updated_at
+
+    await db.commit()
+    await db.refresh(db_owner)
+
+    logger.debug("Owner updated successfully with id: %d", owner_id)
+    return OwnerResponse.model_validate(db_owner)

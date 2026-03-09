@@ -100,3 +100,25 @@ async def insert_new_owner(
         raise HTTPException(status_code=400, detail="Failed to add owner")
     logger.info("POST /owner/add-owner - owner added successfully")
     return result
+
+
+@router.put("/update-owner/{owner_id}", response_model=OwnerResponse)
+async def update_owner(
+    owner_id: int, owner: OwnerCreate, db: AsyncSession = Depends(get_db)
+):
+    "Update existing owner details"
+
+    logger.info("PUT /owner/update-owner/%d called", owner_id)
+    result = await owner_service.update_owner(db, owner_id, owner)
+
+    if not result:
+        logger.error(
+            "PUT /owner/update-owner/%d - failed to update owner",
+            owner_id,
+        )
+        raise HTTPException(status_code=400, detail="Failed to update owner")
+    logger.info(
+        "PUT /owner/update-owner/%d - owner updated successfully",
+        owner_id,
+    )
+    return result
