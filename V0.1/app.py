@@ -32,7 +32,7 @@ def _show_config_summary():
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     """Application lifespan event handler."""
     logger.info("WattPay application is starting up...")
     _show_config_summary()

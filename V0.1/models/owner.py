@@ -5,13 +5,11 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    ForeignKey,
-    Text,
     MetaData,
     DateTime,
 )
 from sqlalchemy.sql.functions import now
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.orm import declarative_base
 
 Base = declarative_base(metadata=MetaData(schema="SaiKrupa"))
 
