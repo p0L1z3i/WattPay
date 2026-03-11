@@ -122,3 +122,32 @@ async def update_owner(
         owner_id,
     )
     return result
+
+
+@router.patch("/update-owner/{owner_id}", response_model=OwnerResponse)
+async def update_owner_contact(
+    owner_id: int, new_contact: str, db: AsyncSession = Depends(get_db)
+):
+    "Update existing owner details by contact"
+
+    logger.info(
+        "PATCH /owner/update-owner/%s called", new_contact
+    )
+    result = await owner_service.update_owner_contact(
+        owner_id, new_contact, db
+    )
+
+    if not result:
+        logger.error(
+            "PATCH /owner/update-owner/%s - failed to update owner contact",
+            new_contact,
+        )
+        raise HTTPException(
+            status_code=400,
+            detail="Failed to update owner contact"
+        )
+    logger.info(
+        "PATCH /owner/update-owner/%s - owner contact updated successfully",
+        new_contact,
+    )
+    return result

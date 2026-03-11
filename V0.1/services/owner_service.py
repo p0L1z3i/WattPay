@@ -18,8 +18,7 @@ async def get_all_owners(
     """Get All owners"""
 
     logger.debug("Fetching all owners")
-    result = await db.execute(select(Owner))
-    db_owner = result.scalars().all()
+    db_owner = (await db.scalars(select(Owner))).all()
 
     if db_owner:
         logger.debug("Found %d owner(s)", len(db_owner))
@@ -103,10 +102,8 @@ async def update_owner(
     """Update owner details"""
 
     logger.debug("Updating owner with id: %d", owner_id)
-    result = await db.execute(
-        select(Owner).where(Owner.owner_id == owner_id)
-    )
-    db_owner = result.scalars().first()
+
+    db_owner = await db.get(Owner, owner_id)
 
     if not db_owner:
         logger.warning("Owner not found with id: %d", owner_id)
@@ -123,4 +120,31 @@ async def update_owner(
     await db.refresh(db_owner)
 
     logger.debug("Owner updated successfully with id: %d", owner_id)
+    return OwnerResponse.model_validate(db_owner)
+
+
+async def update_owner_contact(
+        owner_id: int, new_contact: str, db: AsyncSession
+) -> OwnerResponse | None:
+    """Update owner contact"""
+
+    logger.debug(
+        "Updating contact for owner with id: %d to new contact: %s",
+        owner_id,
+        new_contact,
+    )
+
+    db_owner = await db.get(Owner, owner_id)
+
+    if not db_owner:
+        logger.warning("Owner not found with id: %d", owner_id)
+        return None
+
+    db_owner.owner_contact = new_contact
+    await db.commit()
+    await db.refresh(db_owner)
+
+    logger.debug(
+        "Owner contact updated successfully for id: %d", owner_id
+    )
     return OwnerResponse.model_validate(db_owner)
