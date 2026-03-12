@@ -5,7 +5,7 @@ Docstring for services.owner_service
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from schemas.owner import OwnerCreate, OwnerResponse
+from schemas.owner import OwnerCreate, OwnerUpdate, OwnerResponse
 from models.owner import Owner
 from api.common.log.logging import get_logger
 
@@ -17,11 +17,11 @@ async def get_all_owners(
 ) -> list[OwnerResponse] | None:
     """Get All owners"""
 
-    logger.debug("Fetching all owners")
+    logger.info("Fetching all owners")
     db_owner = (await db.scalars(select(Owner))).all()
 
     if db_owner:
-        logger.debug("Found %d owner(s)", len(db_owner))
+        logger.info("Found %d owner(s)", len(db_owner))
         return [OwnerResponse.model_validate(o) for o in db_owner]
 
     logger.warning("No owners found")
@@ -33,14 +33,14 @@ async def get_owner_by_name(
 ) -> OwnerResponse | None:
     """Get owner by name"""
 
-    logger.debug("Fetching owner by name: %s", owner_name)
+    logger.info("Fetching owner by name: %s", owner_name)
     result = await db.execute(
         select(Owner).where(Owner.owner_name == owner_name)
     )
     db_owner = result.scalars().first()
 
     if db_owner:
-        logger.debug("Found owner with id: %d", db_owner.owner_id)
+        logger.info("Found owner with id: %d", db_owner.owner_id)
         return OwnerResponse.model_validate(db_owner)
 
     logger.warning("Owner not found with name: %s", owner_name)
@@ -52,14 +52,14 @@ async def get_owner_by_contact(
 ) -> OwnerResponse | None:
     """Get owner by contact"""
 
-    logger.debug("Fetching owner by contact: %s", owner_contact)
+    logger.info("Fetching owner by contact: %s", owner_contact)
     result = await db.execute(
         select(Owner).where(Owner.owner_contact == owner_contact)
     )
     db_owner = result.scalars().first()
 
     if db_owner:
-        logger.debug("Found owner with id: %d", db_owner.owner_id)
+        logger.info("Found owner with id: %d", db_owner.owner_id)
         return OwnerResponse.model_validate(db_owner)
 
     logger.warning("Owner not found with contact: %s", owner_contact)
@@ -71,7 +71,7 @@ async def add_owner(
 ) -> OwnerResponse | None:
     """Add new owner"""
 
-    logger.debug("Adding new owner: %s", owner.owner_name)
+    logger.info("Adding new owner: %s", owner.owner_name)
     owner_data = {
         "owner_name": owner.owner_name,
         "owner_contact": owner.owner_contact,
@@ -87,7 +87,7 @@ async def add_owner(
     await db.refresh(new_owner)
 
     if new_owner:
-        logger.debug(
+        logger.info(
             "Owner added successfully with id: %s", new_owner.owner_id
         )
         return OwnerResponse.model_validate(new_owner)
@@ -97,11 +97,11 @@ async def add_owner(
 
 
 async def update_owner(
-        db: AsyncSession, owner_id: int, owner: OwnerCreate
+        db: AsyncSession, owner_id: int, owner: OwnerUpdate
 ) -> OwnerResponse | None:
     """Update owner details"""
 
-    logger.debug("Updating owner with id: %d", owner_id)
+    logger.info("Updating owner with id: %d", owner_id)
 
     db_owner = await db.get(Owner, owner_id)
 
@@ -119,16 +119,16 @@ async def update_owner(
     await db.commit()
     await db.refresh(db_owner)
 
-    logger.debug("Owner updated successfully with id: %d", owner_id)
+    logger.info("Owner updated successfully with id: %d", owner_id)
     return OwnerResponse.model_validate(db_owner)
 
 
 async def update_owner_contact(
         owner_id: int, new_contact: str, db: AsyncSession
 ) -> OwnerResponse | None:
-    """Update owner contact"""
+    """Update contact number for owner"""
 
-    logger.debug(
+    logger.info(
         "Updating contact for owner with id: %d to new contact: %s",
         owner_id,
         new_contact,
@@ -144,7 +144,7 @@ async def update_owner_contact(
     await db.commit()
     await db.refresh(db_owner)
 
-    logger.debug(
+    logger.info(
         "Owner contact updated successfully for id: %d", owner_id
     )
     return OwnerResponse.model_validate(db_owner)

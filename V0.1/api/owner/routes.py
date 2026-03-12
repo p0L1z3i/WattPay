@@ -10,7 +10,7 @@ from api.common.db_session_maker import get_db
 from api.common.log.logging import get_logger
 
 from services import owner_service
-from schemas.owner import OwnerCreate, OwnerResponse
+from schemas.owner import OwnerCreate, OwnerResponse, OwnerUpdate
 
 logger = get_logger(__name__)
 
@@ -21,12 +21,12 @@ router = APIRouter()
 async def get_all_owners(db: AsyncSession = Depends(get_db)):
     "Get all owner details"
 
-    logger.info("GET /owner/get-all-owners called")
+    logger.debug("GET /owner/get-all-owners called")
     result = await owner_service.get_all_owners(db)
     if not result:
         logger.warning("GET /owner/get-all-owners - no owners found")
         raise HTTPException(status_code=404, detail="No Owners Available")
-    logger.info(
+    logger.debug(
         "GET /owner/get-all-owners - returning %d owner(s)", len(result)
     )
     return result
@@ -38,7 +38,7 @@ async def get_owner_by_name(
 ):
     "Get owner details by name"
 
-    logger.info(
+    logger.debug(
         "GET /owner/get-owner-by-name/%s called", owner_name
     )
     result = await owner_service.get_owner_by_name(db, owner_name)
@@ -48,7 +48,7 @@ async def get_owner_by_name(
             owner_name,
         )
         raise HTTPException(status_code=404, detail="Owner Not Found")
-    logger.info(
+    logger.debug(
         "GET /owner/get-owner-by-name/%s - owner found with id: %d",
         owner_name,
         result.owner_id,
@@ -65,7 +65,7 @@ async def get_owner_by_contact(
 ):
     "Get owner details by contact"
 
-    logger.info(
+    logger.debug(
         "GET /owner/get-owner-by-contact/%s called", owner_contact
     )
     result = await owner_service.get_owner_by_contact(db, owner_contact)
@@ -75,7 +75,7 @@ async def get_owner_by_contact(
             owner_contact,
         )
         raise HTTPException(status_code=404, detail="Owner Not Found")
-    logger.info(
+    logger.debug(
         "GET /owner/get-owner-by-contact/%s - owner found with id: %d",
         owner_contact,
         result.owner_id,
@@ -89,7 +89,9 @@ async def insert_new_owner(
 ):
     "Insert new owner details"
 
-    logger.info("POST /owner/add-owner called for owner: %s", owner.owner_name)
+    logger.debug(
+        "POST /owner/add-owner called for owner: %s", owner.owner_name
+    )
     result = await owner_service.add_owner(db, owner)
 
     if not result:
@@ -98,17 +100,17 @@ async def insert_new_owner(
             owner.owner_name,
         )
         raise HTTPException(status_code=400, detail="Failed to add owner")
-    logger.info("POST /owner/add-owner - owner added successfully")
+    logger.debug("POST /owner/add-owner - owner added successfully")
     return result
 
 
 @router.put("/update-owner/{owner_id}", response_model=OwnerResponse)
 async def update_owner(
-    owner_id: int, owner: OwnerCreate, db: AsyncSession = Depends(get_db)
+    owner_id: int, owner: OwnerUpdate, db: AsyncSession = Depends(get_db)
 ):
     "Update existing owner details"
 
-    logger.info("PUT /owner/update-owner/%d called", owner_id)
+    logger.debug("PUT /owner/update-owner/%d called", owner_id)
     result = await owner_service.update_owner(db, owner_id, owner)
 
     if not result:
@@ -117,7 +119,7 @@ async def update_owner(
             owner_id,
         )
         raise HTTPException(status_code=400, detail="Failed to update owner")
-    logger.info(
+    logger.debug(
         "PUT /owner/update-owner/%d - owner updated successfully",
         owner_id,
     )
@@ -130,7 +132,7 @@ async def update_owner_contact(
 ):
     "Update existing owner details by contact"
 
-    logger.info(
+    logger.debug(
         "PATCH /owner/update-owner/%s called", new_contact
     )
     result = await owner_service.update_owner_contact(
@@ -146,7 +148,7 @@ async def update_owner_contact(
             status_code=400,
             detail="Failed to update owner contact"
         )
-    logger.info(
+    logger.debug(
         "PATCH /owner/update-owner/%s - owner contact updated successfully",
         new_contact,
     )
