@@ -148,3 +148,23 @@ async def update_owner_contact(
         "Owner contact updated successfully for id: %d", owner_id
     )
     return OwnerResponse.model_validate(db_owner)
+
+
+async def delete_owner(
+        db: AsyncSession, owner_id: int
+) -> bool:
+    """Delete owner by id"""
+
+    logger.info("Deleting owner with id: %d", owner_id)
+
+    db_owner = await db.get(Owner, owner_id)
+
+    if not db_owner:
+        logger.warning("Owner not found with id: %d", owner_id)
+        return False
+
+    await db.delete(db_owner)
+    await db.commit()
+
+    logger.info("Owner deleted successfully with id: %d", owner_id)
+    return True

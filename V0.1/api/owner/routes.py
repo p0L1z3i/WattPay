@@ -153,3 +153,23 @@ async def update_owner_contact(
         new_contact,
     )
     return result
+
+
+@router.delete("/delete-owner/{owner_id}")
+async def delete_owner(owner_id: int, db: AsyncSession = Depends(get_db)):
+    "Delete owner details by id"
+
+    logger.debug("DELETE /owner/delete-owner/%d called", owner_id)
+    result = await owner_service.delete_owner(db, owner_id)
+
+    if not result:
+        logger.error(
+            "DELETE /owner/delete-owner/%d - failed to delete owner",
+            owner_id,
+        )
+        raise HTTPException(status_code=400, detail="Failed to delete owner")
+    logger.debug(
+        "DELETE /owner/delete-owner/%d - owner deleted successfully",
+        owner_id,
+    )
+    return {"message": "Owner deleted successfully"}
