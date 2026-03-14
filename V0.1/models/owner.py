@@ -25,13 +25,11 @@ class Owner(Base):
     )
     owner_name = Column(String(100), nullable=False)
     owner_contact = Column(String(15), nullable=False)
-    owner_email = Column(String(200), unique=True, server_default="NA")
-    owner_status = Column(String(20))
     owner_created_at = Column(
-        DateTime(timezone=True),
+        DateTime(timezone=False),
         server_default=now()
     )
     owner_updated_at = Column(
-        DateTime(timezone=True),
+        DateTime(timezone=False),
         onupdate=now()
     )

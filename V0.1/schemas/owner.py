@@ -12,8 +12,6 @@ class OwnerBase(BaseModel):
 
     owner_name: str
     owner_contact: str
-    owner_email: Optional[str] = "NA"
-    owner_status: str
 
 
 class OwnerCreate(OwnerBase):
