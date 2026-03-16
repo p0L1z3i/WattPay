@@ -18,43 +18,40 @@ This application helps property owners and managers calculate electricity bills 
 
 ### Backend
 
-- **Language:** Python
-- **IDE:** Visual Studio Code
+- **Coding Language:** Python
 - **Database:** PostgreSQL 18
-- **Database Management:** pgAdmin 4
 
 ## Folder Structure for WattPay Application
 
 - wattpay-backend/
   - V0.1/
-    - core/
-      - app.ini
-      - config.py
-      - database.py
-    - models/
-      - owner.py
-      - tenant.py
-      - meter.py
-    - services/
-      - owner_service.py
-      - tenant_service.py
-      - meter_service.py
-    - schemas/
-      - owner.py
-      - tenant.py
-      - meter.py
+    - alembic/
+      - env.py
+      - README
+      - script.py.mako
+      - versions/
     - api/
+      - common/
+        - config_manager.py
+        - db_session_maker.py
+        - log/
+          - logging.py
+          - conf/
+            - logging_config.json
       - owner/
         - routes.py
-        - init.py
-      - tenant/
-        - routes.py
-        - init.py
-      - meter/
-        - routes.py
-        - init.py
-      - init.py
-    - main.py
+    - build/
+      - logs/
+    - config/
+      - app.ini
+    - models/
+      - owner.py
+    - schemas/
+      - owner.py
+    - services/
+      - owner_service.py
+    - alembic.ini
+    - app.py
     - pyproject.toml
     - README.md
     - .gitignore
