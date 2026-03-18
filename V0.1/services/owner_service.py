@@ -80,18 +80,22 @@ async def add_owner(
         owner_data["owner_created_at"] = owner.owner_created_at
 
     new_owner = Owner(**owner_data)
-    db.add(new_owner)
-    await db.commit()
-    await db.refresh(new_owner)
 
-    if new_owner:
-        logger.info(
-            "Owner added successfully with id: %s", new_owner.owner_id
+    try:
+        db.add(new_owner)
+        await db.commit()
+        await db.refresh(new_owner)
+    except Exception as e:
+        logger.error(
+            "Error adding owner: %s, error: %s", owner.owner_name, str(e)
         )
-        return OwnerResponse.model_validate(new_owner)
+        await db.rollback()
+        return None
 
-    logger.error("Failed to add owner: %s", owner.owner_name)
-    return None
+    logger.info(
+        "Owner added successfully with id: %s", new_owner.owner_id
+    )
+    return OwnerResponse.model_validate(new_owner)
 
 
 async def update_owner(
