@@ -378,7 +378,7 @@ class ConfigManager:
 
         return LoggingConfig(
             level=self.get(log_section, 'level', 'INFO'),
-            log_file=self.get(log_section, 'log_file', 'build/logs/app.log'),
+            log_file=self.get(log_section, 'file', 'build/logs/app.log'),
             console_output=self.get(log_section, 'console_output', True),
             file_output=self.get(log_section, 'file_output', True),
             format=format_str,

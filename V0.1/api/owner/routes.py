@@ -41,6 +41,11 @@ async def get_owner_by_name(
     logger.debug(
         "GET /owner/get-owner-by-name/%s called", owner_name
     )
+    if not owner_name.strip():
+        logger.warning(
+            "GET /owner/get-owner-by-name - invalid owner_name provided"
+        )
+        raise HTTPException(status_code=400, detail="Invalid owner name")
     result = await owner_service.get_owner_by_name(db, owner_name)
     if not result:
         logger.warning(
@@ -68,6 +73,11 @@ async def get_owner_by_contact(
     logger.debug(
         "GET /owner/get-owner-by-contact/%s called", owner_contact
     )
+    if not owner_contact.strip():
+        logger.warning(
+            "GET /owner/get-owner-by-contact - invalid owner_contact provided"
+        )
+        raise HTTPException(status_code=400, detail="Invalid owner contact")
     result = await owner_service.get_owner_by_contact(db, owner_contact)
     if not result:
         logger.warning(
