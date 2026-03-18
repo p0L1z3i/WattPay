@@ -128,7 +128,7 @@ async def update_owner(
             "PUT /owner/update-owner/%d - failed to update owner",
             owner_id,
         )
-        raise HTTPException(status_code=400, detail="Failed to update owner")
+        raise HTTPException(status_code=404, detail="Failed to update owner")
     logger.debug(
         "PUT /owner/update-owner/%d - owner updated successfully",
         owner_id,
@@ -166,7 +166,7 @@ async def update_owner_contact(
             cleaned_contact,
         )
         raise HTTPException(
-            status_code=400,
+            status_code=404,
             detail="Failed to update owner contact"
         )
     logger.debug(
@@ -188,7 +188,7 @@ async def delete_owner(owner_id: int, db: AsyncSession = Depends(get_db)):
             "DELETE /owner/delete-owner/%d - failed to delete owner",
             owner_id,
         )
-        raise HTTPException(status_code=400, detail="Failed to delete owner")
+        raise HTTPException(status_code=404, detail="Failed to delete owner")
     logger.debug(
         "DELETE /owner/delete-owner/%d - owner deleted successfully",
         owner_id,
