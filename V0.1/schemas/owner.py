@@ -4,7 +4,7 @@ Pydantic Schemas For Owner
 
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, field_serializer, field_validator
+from pydantic import BaseModel, field_validator, ConfigDict
 
 
 class OwnerBase(BaseModel):
@@ -47,11 +47,4 @@ class OwnerResponse(OwnerBase):
     owner_created_at: datetime
     owner_updated_at: Optional[datetime] = None
 
-    @field_serializer("owner_created_at", "owner_updated_at")
-    def format_datetime(self, value: Optional[datetime]) -> Optional[str]:
-        "Format datetime fields to YYYY-MM-DD HH:MM:SS"
-        return value.strftime("%Y-%m-%d %H:%M:%S") if value else None
-
-    class Config:
-        "allows ORM objects to be converted directly to JSON"
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

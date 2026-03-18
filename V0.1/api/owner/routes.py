@@ -142,17 +142,28 @@ async def update_owner_contact(
 ):
     "Update existing owner details by contact"
 
+    cleaned_contact = new_contact.strip()
+    if not cleaned_contact:
+        logger.warning(
+            "PATCH /owner/update-owner/%d"
+            " - attempted to update with empty contact",
+            owner_id,
+        )
+        raise HTTPException(
+            status_code=400,
+            detail="New contact must not be empty or whitespace only"
+        )
     logger.debug(
-        "PATCH /owner/update-owner/%s called", new_contact
+        "PATCH /owner/update-owner/%s called", cleaned_contact
     )
     result = await owner_service.update_owner_contact(
-        owner_id, new_contact, db
+        owner_id, cleaned_contact, db
     )
 
     if not result:
         logger.error(
             "PATCH /owner/update-owner/%s - failed to update owner contact",
-            new_contact,
+            cleaned_contact,
         )
         raise HTTPException(
             status_code=400,
@@ -160,7 +171,7 @@ async def update_owner_contact(
         )
     logger.debug(
         "PATCH /owner/update-owner/%s - owner contact updated successfully",
-        new_contact,
+        cleaned_contact,
     )
     return result
 

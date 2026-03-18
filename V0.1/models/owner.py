@@ -27,9 +27,11 @@ class Owner(Base):
     owner_contact = Column(String(15), nullable=False)
     owner_created_at = Column(
         DateTime(timezone=False),
+        nullable=False,
         server_default=now()
     )
     owner_updated_at = Column(
         DateTime(timezone=False),
+        nullable=True,
         onupdate=now()
     )

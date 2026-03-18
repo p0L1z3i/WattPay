@@ -311,7 +311,7 @@ class ConfigManager:
             host=self.get(db_section, 'host', 'localhost'),
             port=self.get(db_section, 'port', 5432),
             database=self.get(db_section, 'name', 'watt_pay_db'),
-            username=self.get(db_section, 'user', 'postgres'),
+            username=self.get(db_section, 'username', 'postgres'),
             password=self.get(db_section, 'password', ''),
             ssl_mode=self.get(db_section, 'ssl_mode', 'disable'),
             pool_size=self.get(db_section, 'pool_size', 10),

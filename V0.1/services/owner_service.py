@@ -14,7 +14,7 @@ logger = get_logger(__name__)
 
 async def get_all_owners(
         db: AsyncSession
-) -> list[OwnerResponse] | None:
+) -> list[OwnerResponse]:
     """Get All owners"""
 
     logger.info("Fetching all owners")
@@ -25,7 +25,7 @@ async def get_all_owners(
         return [OwnerResponse.model_validate(o) for o in db_owner]
 
     logger.warning("No owners found")
-    return None
+    return []
 
 
 async def get_owner_by_name(
@@ -75,8 +75,6 @@ async def add_owner(
     owner_data = {
         "owner_name": owner.owner_name,
         "owner_contact": owner.owner_contact,
-        "owner_email": owner.owner_email,
-        "owner_status": owner.owner_status,
     }
     if owner.owner_created_at is not None:
         owner_data["owner_created_at"] = owner.owner_created_at
@@ -111,8 +109,6 @@ async def update_owner(
 
     db_owner.owner_name = owner.owner_name
     db_owner.owner_contact = owner.owner_contact
-    db_owner.owner_email = owner.owner_email
-    db_owner.owner_status = owner.owner_status
     if owner.owner_updated_at is not None:
         db_owner.owner_updated_at = owner.owner_updated_at
 

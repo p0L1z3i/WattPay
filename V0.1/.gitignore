@@ -12,3 +12,11 @@ wheels/
 # Logs
 build/logs/
 app.log
+
+# Environment variable files (may contain secrets)
+.env
+.env.*
+
+# IDE/editor specific files
+.vscode/
+.idea/
