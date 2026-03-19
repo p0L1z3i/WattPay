@@ -8,6 +8,7 @@ up only once and provides a convenient interface to obtain loggers.
 import json
 import logging
 import logging.config
+import logging.handlers
 from pathlib import Path
 
 
@@ -21,7 +22,7 @@ def find_project_root(
     raise RuntimeError(f"Project root not found (no {marker} found)")
 
 
-LOG_FILE = find_project_root().joinpath('build', 'logs', 'app.log')
+LOG_FILE = find_project_root().joinpath('build', 'logs', 'WattPay.log')
 LOGGING_CONFIG_FILE = (
     find_project_root().joinpath(
         'api', 'common', 'log', 'conf', 'logging_config.json'
@@ -41,7 +42,7 @@ def setup_logging():
     with open(LOGGING_CONFIG_FILE, 'r', encoding='utf-8') as config_file:
         config_dict = json.load(config_file)
         for handler in config_dict.get('handlers', {}).values():
-            if handler.get('class') == 'logging.FileHandler':
+            if 'filename' in handler:
                 handler['filename'] = str(LOG_FILE)
 
         logging.config.dictConfig(config_dict)
@@ -55,7 +56,10 @@ def set_file_handler_level(level: str = 'DEBUG') -> None:
 
     numeric_level = getattr(logging, level.upper(), logging.INFO)
     for handler in logging.root.handlers:
-        if isinstance(handler, logging.FileHandler):
+        if isinstance(
+            handler,
+            (logging.FileHandler, logging.handlers.TimedRotatingFileHandler),
+        ):
             handler.setLevel(numeric_level)
             logging.getLogger(__name__).debug(
                 "File handler log level set to %s", level.upper()
