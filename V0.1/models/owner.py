@@ -28,6 +28,7 @@ class Owner(Base):
     owner_created_at = Column(
         DateTime(timezone=False),
         nullable=False,
+        default=now(),
         server_default=now()
     )
     owner_updated_at = Column(

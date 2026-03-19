@@ -72,19 +72,16 @@ async def add_owner(
     """Add new owner"""
 
     logger.info("Adding new owner: %s", owner.owner_name)
-    owner_data = {
-        "owner_name": owner.owner_name,
-        "owner_contact": owner.owner_contact,
-    }
-    if owner.owner_created_at is not None:
-        owner_data["owner_created_at"] = owner.owner_created_at
-
-    new_owner = Owner(**owner_data)
+    new_owner = Owner(
+        owner_name=owner.owner_name,
+        owner_contact=owner.owner_contact,
+    )
 
     try:
         db.add(new_owner)
-        await db.commit()
+        await db.flush()
         await db.refresh(new_owner)
+        await db.commit()
     except Exception as e:
         logger.error(
             "Error adding owner: %s, error: %s", owner.owner_name, str(e)
@@ -113,11 +110,10 @@ async def update_owner(
 
     db_owner.owner_name = owner.owner_name
     db_owner.owner_contact = owner.owner_contact
-    if owner.owner_updated_at is not None:
-        db_owner.owner_updated_at = owner.owner_updated_at
 
-    await db.commit()
+    await db.flush()
     await db.refresh(db_owner)
+    await db.commit()
 
     logger.info("Owner updated successfully with id: %d", owner_id)
     return OwnerResponse.model_validate(db_owner)
