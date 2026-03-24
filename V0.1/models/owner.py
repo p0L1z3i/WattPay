@@ -5,13 +5,12 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    MetaData,
     DateTime,
 )
 from sqlalchemy.sql.functions import now
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import relationship
 
-Base = declarative_base(metadata=MetaData(schema="SaiKrupa"))
+from models import Base
 
 
 class Owner(Base):
@@ -35,3 +34,5 @@ class Owner(Base):
         nullable=True,
         onupdate=now()
     )
+
+    tenant = relationship("Tenant", back_populates="owner")
