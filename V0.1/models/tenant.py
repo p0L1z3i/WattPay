@@ -7,6 +7,8 @@ from sqlalchemy import (
     Integer,
     String,
     DateTime,
+    Text,
+    text
 )
 from sqlalchemy.sql.functions import now
 from sqlalchemy.orm import relationship
@@ -34,6 +36,7 @@ class Tenant(Base):
     )
     tenant_name = Column(String(100), nullable=False)
     tenant_contact = Column(String(15), nullable=False)
+    tenant_status = Column(Text, nullable=False, server_default=text("active"))
     tenant_created_at = Column(
         DateTime(timezone=False),
         nullable=False,
